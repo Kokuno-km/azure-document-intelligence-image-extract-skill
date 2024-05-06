@@ -11,19 +11,22 @@ urlFragment: azure-document-intelligence-image-extract-skill
 description: This custom skill uses Azure AI Document Intelligence's pre-trained layout models to extract images and fields from forms.
 ---
 # Image Extract Custom Skill for Azure AI Search
-このカスタムスキルは、Azure AI Document Intelligence のレイアウトモデルを使用して PDF などのドキュメントから画像を抽出します。
+このカスタムスキルは、Azure AI Document Intelligence のレイアウトモデルを使用して PDF などのドキュメントから画像を抽出します。抽出した画像データは Azure Data Lake Storage Gen2 に保存します。
 
 # Deployment
 
 本スキルは、[Azure AI Document Intelligence](https://azure.microsoft.com/products/ai-services/ai-document-intelligence) リソースおよび、[Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction)（ストレージアカウント）リソースが必要です。また、`DOCUMENT_INTELLIGENCE_ENDPOINT` と `DOCUMENT_INTELLIGENCE_KEY` および、`AZURE_STORAGE_CONNECTION_STRING`、`AZURE_STORAGE_CONTAINER_NAME` が必要です。Azure Functions にデプロイする際は、**「アプリケーション設定」項目に設定する必要**があります。
 
 ## スキルのデプロイ方法
-1. Azure portal で、Azure AI Document Intelligence リソースを作成します。
-2. Azure AI Document Intelligence の API キーとエンドポイントをコピーします。
-3. このレポジトリを clone します。
-4. Visual Studio Code でレポジトリのフォルダを開き、Azure Functions にリモートデプロイします。
-5. Functions にデプロイが完了したら, Azure Portal の Azure Functions の設定→構成から、`DOCUMENT_INTELLIGENCE_ENDPOINT` と `DOCUMENT_INTELLIGENCE_KEY` 環境変数にそれぞれ値を貼り付けます。
-6. ストレージアカウント リソースも同様な手順で設定します。
+1. Azure portal で、Azure AI Document Intelligence [リソースを作成](https://learn.microsoft.com/azure/ai-services/document-intelligence/create-document-intelligence-resource?view=doc-intel-4.0.0)します。
+1. Azure AI Document Intelligence の API キーとエンドポイントをコピーします。
+1. ストレージアカウント [リソースを作成](https://learn.microsoft.com/azure/storage/blobs/create-data-lake-storage-account)します。
+1. ストレージブラウザーや [Azure Storage Explorer](https://azure.microsoft.com/products/storage/storage-explorer) を使用して画像ファイル出力先のコンテナを作成します。
+1. ストレージアカウントの接続文字列とコンテナ名をコピーします。
+1. このレポジトリを clone します。
+1. Visual Studio Code でレポジトリのフォルダを開き、Azure Functions にリモートデプロイします。
+1. Functions にデプロイが完了したら, Azure Portal の Azure Functions の設定→環境変数から、`DOCUMENT_INTELLIGENCE_ENDPOINT` と `DOCUMENT_INTELLIGENCE_KEY`、および`AZURE_STORAGE_CONNECTION_STRING`、`AZURE_STORAGE_CONTAINER_NAME` 環境変数を作成してそれぞれ値を貼り付けます。
+
 
 
 ## Requirements
@@ -51,7 +54,7 @@ Azure Functions で実行する場合、これは「アプリケーションの�
             "recordId": "record1",
             "data": { 
                 "model": "prebuilt-layout",
-                "formUrl": "https://strsemantic1.blob.core.windows.net/docintel1/layout-pageobject.pdf",
+                "formUrl": "https://xxx.blob.core.windows.net/xxx/layout-pageobject.pdf",
                 "formSasToken":  "?st=sasTokenThatWillBeGeneratedByCognitiveSearch"
             }
         }
@@ -123,7 +126,7 @@ Azure Functions で実行する場合、これは「アプリケーションの�
     "inputs": [
         {
             "name": "formUrl",
-            "source": "/document/metadata_storage_path"
+            "source": "/document/metadata_storage_path_raw"
         },
         {
             "name": "formSasToken",
@@ -145,7 +148,7 @@ Azure Functions で実行する場合、これは「アプリケーションの�
         },
         {
             "name": "content",
-            "targetName": "content"
+            "targetName": "markdown"
         },
         {
             "name": "figures",
@@ -170,7 +173,7 @@ Azure Functions で実行する場合、これは「アプリケーションの�
       "targetFieldName": "sections"
     },
     {
-      "sourceFieldName": "/document/content",
+      "sourceFieldName": "/document/markdown",
       "targetFieldName": "markdown"
     },
     {
