@@ -183,3 +183,16 @@ Azure Functions で実行する場合、これは「アプリケーションの�
   ]
 }
 ```
+
+# Postman 用コレクション
+このスキルセットを実行するための Azure AI Search コンポーネントを一発で作成する [Postman](https://www.postman.com/downloads/) 用コレクションを用意しています。
+
+https://github.com/nohanaga/azure-document-intelligence-image-extract-skill-postman
+
+この Postman コレクションには以下のリクエストおよび環境変数が含まれます。
+
+- 01 - Create a datasource
+- 02 - Create an Index
+- 03 - Create a Skillset
+- 04 - Create an Indexer
+- 05 - Skill Execution Test
