@@ -77,7 +77,7 @@ def save_to_blob_images(img_bytes, parent_dir, image_filename, metadata):
     # Blob Service クライアントを初期化
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     # Blob のパスを構築
-    blob_name = f"{parent_dir}/{image_filename}"
+    blob_name = f"imgs/{parent_dir}/{image_filename}"
 
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
 
