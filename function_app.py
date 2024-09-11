@@ -143,6 +143,7 @@ def compose_response(json_data):
     endpoint = os.environ["DOCUMENT_INTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENT_INTELLIGENCE_KEY"]
     
+    # ドキュメントごとに解析を実行し、リストに結果をappend
     for value in values:
         output_record = analyze_document(endpoint=endpoint, key=key, recordId=value["recordId"], data=value["data"])
         results["values"].append(output_record)
